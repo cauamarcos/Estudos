@@ -9,9 +9,8 @@ int main(){
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 3; j++)
 				ler >> matriz[i][j];
-			}
 		}
-    ler.close();
+	}
     bool seguir = true, x, o;
     for (int i = 0; i < 3; i++){
         x = true, o = true;
@@ -86,8 +85,9 @@ int main(){
             cout << 2;
         }
     }
-    if (seguir)
+    if(seguir){
         cout << "0";
-
+	}
+	
 	return 0;
 }
