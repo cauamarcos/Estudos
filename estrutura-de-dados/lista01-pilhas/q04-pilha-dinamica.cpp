@@ -104,7 +104,10 @@ int main() {
                 cout << pilha.Tamanho() << endl;
                 break;
             case 'e': // espiar
-                cout << pilha.Topo() << endl;
+                if (pilha.Tamanho () > 0)
+                    cout << pilha.Topo() << endl;
+                else
+                    cout << "erro" << endl;
                 break;
             case 'f': // finalizar
                 // checado no do-while
