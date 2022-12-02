@@ -23,6 +23,7 @@ void lerLinhas () {
     cin >> linhaInicio;
     cout << "Digite a posicao da linha de termino da leitura: ";
     cin >> linhaFim;
+    cout << endl;
     leitura.seekg ((linhaInicio) * sizeof (Registro));
     for (int i = linhaInicio; i <= linhaFim; i++) {
         leitura.read ((char*)(&registro), sizeof (Registro));
@@ -39,39 +40,59 @@ void editarRegistro () {
     Registro registro;
     string converter;
     int numLinha;
-    fstream arquivo ("CSV.dat", ios::in | ios::binary);
-    fstream gravarNovoDado ("CSV.dat", ios::out | ios::binary);
+    fstream gravarNovoDado;
+    gravarNovoDado.open ("CSV.dat", ios::in | ios::out | ios::ate);
     cout << "Informe a posicao do registro: ";
     cin >> numLinha;
-    arquivo.seekg ((numLinha) * sizeof (Registro));
-    arquivo.read ((char*)(&registro), sizeof (Registro));
     cout << "anzsic06: ";
     cin >> converter;
-    for (int i = 0; i < 5; i++)
-        registro.anzsic06 [i] = converter [i];
+    unsigned cont = 0;
+    while (cont < 5 and cont < converter.size ()) {
+        registro.anzsic06 [cont] = converter [cont];
+        cont++;
+    }
     cout << "Area: ";
     cin >> converter;
-    for (int i = 0; i < 7; i++)
-        registro.Area [i] = converter [i];
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        registro.Area [cont] = converter [cont];
+        cont++;
+    }
     cout << "ano: ";
     cin >> registro.ano;
     cout << "geo_count: ";
     cin >> registro.geo_count;
     cout << "ec_count: ";
     cin >> registro.ec_count;
-    gravarNovoDado.seekp ((numLinha) * sizeof (Registro));
+    gravarNovoDado.seekp (numLinha * sizeof (Registro));
     gravarNovoDado.write ((const char*)(&registro), sizeof (Registro));
 }
 
 void inverterPosicoes () {
-
+    Registro registro1, registro2;
+    fstream receber1, receber2;
+    receber1.open ("CSV.dat", ios::in | ios::out | ios::ate);
+    receber2.open ("CSV.dat", ios::in | ios::out | ios::ate);
+    int pos1, pos2;
+    cout << "Posicao de um registro: ";
+    cin >> pos1;
+    cout << "Posicao de outro registro: ";
+    cin >> pos2;
+    receber1.seekg (pos1 * sizeof (Registro));
+    receber2.seekg (pos2 * sizeof (Registro));
+    receber1.read ((char*)(&registro1), sizeof (Registro));
+    receber1.seekp (pos2 * sizeof (Registro));
+    receber1.write ((const char*)(&registro1), sizeof (Registro));
+    receber2.seekp (pos1 * sizeof (Registro));
+    receber2.write ((const char*)(&registro2), sizeof (Registro));
+    cout << endl << "Troca realizada!" << endl;
 }
 
 void depurarTodosRegistros () {
     ifstream ler ("CSV.dat"); // abre o arquivo binario para leitura
     Registro registro;
     if (ler) {
-        while (ler) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
+        while (not ler.eof ()) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
             ler.read ((char*)(&registro), sizeof (Registro));
             for (int i = 0; i < 5; i++) // a cada registro lido são depurados seus atributos
                 cout <<  registro.anzsic06 [i];
