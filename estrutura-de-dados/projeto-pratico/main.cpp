@@ -3,12 +3,12 @@
 using namespace std;
 
 struct Registro { // registro com os campos a serem lidos da base de dados
-        char anzsic06 [5] = {'\0', '\0', '\0', '\0', '\0'};
-        char Area [7] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0'};
-        // os vetores de char sempre serão inicializados completos por caracteres vazios
-        int ano;
-        int geo_count;
-        int ec_count;
+    char anzsic06 [5] = {'\0', '\0', '\0', '\0', '\0'};
+    char Area [7] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+    // os vetores de char sempre serão inicializados completos por caracteres vazios
+    int ano;
+    int geo_count;
+    int ec_count;
 };
 
 void adicionarElemento () {

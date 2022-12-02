@@ -3,11 +3,12 @@
 using namespace std;
 
 struct Registro { // criação do registro compatível aos dados que serão lidos do arquivo csv
-        char anzsic06 [5] = {'\0', '\0', '\0', '\0', '\0'};
-        char Area [7];
-        int ano;
-        int geo_count;
-        int ec_count;
+    char anzsic06 [5] = {'\0', '\0', '\0', '\0', '\0'};
+    char Area [7] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+    // os vetores de char sempre serão inicializados completos por caracteres vazios
+    int ano;
+    int geo_count;
+    int ec_count;
 };
 
 void tratar (string dados, Registro &registro) { // função para converter a linha retirada do arquivo no int main para um registro
@@ -46,18 +47,20 @@ void tratar (string dados, Registro &registro) { // função para converter a li
 }
 
 void converterParaBinario (Registro registro) { // funçaõ de conversão que será chamada a cada linha lida
-    ofstream gravar ("CSV.dat", ios::app); // abertura do arquivo para gravação em binário no final
+    fstream gravar;
+    gravar.open ("CSV.dat", ios::out | ios::app); // abertura do arquivo para gravação em binário no final
     gravar.write ((const char*)(&registro), sizeof (Registro)); // gravação em binário
     gravar.close (); // fechamento da escrita no arquivo
 }
 
 int main () {
-    ifstream ler ("Data7602DescendingYearOrder.csv"); // criação da função para leitura do arquivo csv
+   fstream ler;
+   ler.open ("Data7602DescendingYearOrder.csv", ios::in); // abertura do arquivo csv para leitura
     string linha;
-    Registro campos;
     if (ler) {
         getline (ler, linha); // leitura do cabeçalho, que não é gravado em binário 
-        while (ler) {
+        while (not ler.eof ()) {
+            Registro campos;
             getline (ler, linha); // cada linha lida
             tratar (linha, campos); // é usada para criar um registro
             converterParaBinario (campos); // e o registro é gravado no arquivo binário
