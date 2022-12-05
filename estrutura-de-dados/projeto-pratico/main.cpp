@@ -3,20 +3,20 @@
 using namespace std;
 
 struct Registro { // registro com os campos a serem lidos da base de dados
-    char anzsic06 [5] = {'\0', '\0', '\0', '\0', '\0'};
-    char Area [7] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+    char anzsic06 [5] = {char(0)};
+    char Area [7] = {char(0)};
+    char ano [7] = {char(0)};
+    char geo_count [7] = {char(0)};
+    char ec_count [7] = {char(0)};
     // os vetores de char sempre serão inicializados completos por caracteres nulos
-    int ano;
-    int geo_count;
-    int ec_count;
 };
 
 void adicionarElemento () {
     fstream gravarNovoDado, reposicionarResto;
     string converter;
     // criação das funções de manipulação do arquivo binário
-    gravarNovoDado.open ("CSV.dat", ios::in | ios::out | ios::ate);
-    reposicionarResto.open ("CSV.dat", ios::in | ios::out | ios::ate);
+    gravarNovoDado.open ("CSV.bin", ios::in | ios::out | ios::ate);
+    reposicionarResto.open ("CSV.bin", ios::in | ios::out | ios::ate);
     Registro novoRegistro, registro, gravar;
     int numLinha;
     cout << "Informe a posicao de insercao do registro: ";
@@ -37,11 +37,26 @@ void adicionarElemento () {
         cont++;
     }
     cout << "ano: ";
-    cin >> novoRegistro.ano;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        novoRegistro.ano [cont] = converter [cont];
+        cont++;
+    }
     cout << "geo_count: ";
-    cin >> novoRegistro.geo_count;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        novoRegistro.geo_count[cont] = converter [cont];
+        cont++;
+    }
     cout << "ec_count: ";
-    cin >> novoRegistro.ec_count;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        novoRegistro.ec_count [cont] = converter [cont];
+        cont++;
+    }
     // posicionamento da cabeça de leitura na posição em que será inserido o novo registro
     reposicionarResto.seekg (numLinha * sizeof (Registro));
     // leitura do registro que ocupa a posição que será ocupada pelo novo
@@ -62,11 +77,14 @@ void adicionarElemento () {
         gravarNovoDado.write ((const char*)(&gravar), sizeof (Registro));
     }
     cout << endl << "Novo registro inserido!" << endl;
+    // encerramento das funções
+    gravarNovoDado.close ();
+    reposicionarResto.close ();
 }
 
-void lerLinhas () {
+void lerIntervalo () {
     Registro registro;
-    ifstream leitura ("CSV.dat"); // criação da função de leitura do arquivo binário
+    ifstream leitura ("CSV.bin"); // criação da função de leitura do arquivo binário
     int linhaInicio, linhaFim;
     // entrada do intervalo de linhas que serão depuradas
     cout << "Digite a posicao da linha de inicio da leitura: ";
@@ -80,12 +98,22 @@ void lerLinhas () {
         // a cada repetição é lido e depurado um registro
         leitura.read ((char*)(&registro), sizeof (Registro));
         for (int i = 0; i < 5; i++)
-                cout <<  registro.anzsic06 [i];
-            cout << ",";
+            cout <<  registro.anzsic06 [i];
+        cout << ",";
         for (int i = 0; i < 7; i++)
             cout << registro.Area [i];
-        cout << "," << registro.ano << "," << registro.geo_count << "," << registro.ec_count << endl;
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ano [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.geo_count [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ec_count [i];
+        cout << endl;
     }
+    leitura.close (); // fechamento da função
 }
 
 void editarRegistro () {
@@ -94,7 +122,7 @@ void editarRegistro () {
     int numLinha;
     fstream gravarNovoDado;
     // criação da função para manipular o registro a ser editado no arquivo binário
-    gravarNovoDado.open ("CSV.dat", ios::in | ios::out | ios::ate);
+    gravarNovoDado.open ("CSV.bin", ios::in | ios::out | ios::ate);
     cout << "Informe a posicao do registro: ";
     cin >> numLinha;
     // entrada de novos dados do registro
@@ -113,22 +141,38 @@ void editarRegistro () {
         cont++;
     }
     cout << "ano: ";
-    cin >> registro.ano;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        registro.ano [cont] = converter [cont];
+        cont++;
+    }
     cout << "geo_count: ";
-    cin >> registro.geo_count;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        registro.geo_count[cont] = converter [cont];
+        cont++;
+    }
     cout << "ec_count: ";
-    cin >> registro.ec_count;
+    cin >> converter;
+    cont = 0;
+    while (cont < 7 and cont < converter.size ()) {
+        registro.ec_count [cont] = converter [cont];
+        cont++;
+    }
     // posicionamento da cabeça de escrita na posição desejada pelo usuário
     gravarNovoDado.seekp (numLinha * sizeof (Registro));
     // gravação do registro com novos valores na posição solicitada
     gravarNovoDado.write ((const char*)(&registro), sizeof (Registro));
+    gravarNovoDado.close (); // encerramento da função
 }
 
 void inverterPosicoes () {
     Registro registro1, registro2;
     fstream receber1, receber2;
-    receber1.open ("CSV.dat", ios::in | ios::out | ios::ate); // declaração das funções de manipulação do arquivo binário
-    receber2.open ("CSV.dat", ios::in | ios::out | ios::ate);
+    receber1.open ("CSV.bin", ios::in | ios::out | ios::ate); // declaração das funções de manipulação do arquivo binário
+    receber2.open ("CSV.bin", ios::in | ios::out | ios::ate);
     int pos1, pos2;
     cout << "Posicao de um registro: ";
     cin >> pos1;
@@ -147,20 +191,38 @@ void inverterPosicoes () {
     receber1.write ((const char*)(&registro1), sizeof (Registro));
     receber2.write ((const char*)(&registro2), sizeof (Registro));
     cout << endl << "Troca realizada!" << endl;
+    // encerramento das funções
+    receber1.close ();
+    receber2.close ();
 }
 
 void depurarTodosRegistros () {
-    ifstream ler ("CSV.dat"); // abre o arquivo binario para leitura
-    Registro registro;
+    ifstream ler ("CSV.bin"); // abre o arquivo binario para leitura
+    ler.seekg (0, ler.end); // posiciona a cabeça de leitura no fim
+    long long int tam_bytes = ler.tellg (); // recebe o número de bytes do arquivo
+    long long int qntdCadastrados = (tam_bytes / sizeof (Registro)); 
+    // divide o tamanho do arquivo pelo tamanho da estrutura Registro para saber o número de registros no arquivo
+    ler.seekg (0, ler.beg); // retorna a cabeça de leitura para o início
     if (ler) {
-        while (not ler.eof ()) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
+        for (int j = 0; j < qntdCadastrados; j++) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
+            Registro registro;
             ler.read ((char*)(&registro), sizeof (Registro));
-            for (int i = 0; i < 5; i++) // a cada registro lido são depurados seus atributos
-                cout <<  registro.anzsic06 [i];
+            // a cada registro lido são depurados seus atributos
+            for (int i = 0; i < 5; i++)
+                cout << registro.anzsic06 [i];
             cout << ",";
             for (int i = 0; i < 7; i++)
                 cout << registro.Area [i];
-            cout << "," << registro.ano << "," << registro.geo_count << "," << registro.ec_count << endl;
+            cout << ",";
+            for (int i = 0; i < 7; i++)
+                cout << registro.ano [i];
+            cout << ",";
+            for (int i = 0; i < 7; i++)
+                cout << registro.geo_count [i];
+            cout << ",";
+            for (int i = 0; i < 7; i++)
+                cout << registro.ec_count [i];
+            cout << endl;
         }
     }
     else {
@@ -184,7 +246,7 @@ int main () {
         if (comando == 1)
             adicionarElemento ();
         else if (comando == 2)
-            lerLinhas ();
+            lerIntervalo ();
         else if (comando == 3)
             editarRegistro ();
         else if (comando == 4)
