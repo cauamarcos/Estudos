@@ -205,7 +205,7 @@ void depurarTodosRegistros () {
     // divide o tamanho do arquivo pelo tamanho da estrutura Registro para saber o número de registros no arquivo
     ler.seekg (0, ler.beg); // retorna a cabeça de leitura para o início
     if (ler) {
-        for (int j = 0; j < qntdCadastrados; j++) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
+        for (long long int j = 0; j < qntdCadastrados; j++) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
             Registro registro;
             ler.read ((char*)(&registro), sizeof (Registro));
             // a cada registro lido são depurados seus atributos
