@@ -166,6 +166,7 @@ void editarRegistro () {
     // gravação do registro com novos valores na posição solicitada
     gravarNovoDado.write ((const char*)(&registro), sizeof (Registro));
     gravarNovoDado.close (); // encerramento da função
+    cout << endl << "Registro editado!" << endl;
 }
 
 void inverterPosicoes () {
@@ -236,7 +237,7 @@ int main () {
         cout << "Selecione uma opcao" << endl
              << "[ 1 ] = adicionar elemento" << endl
              << "[ 2 ] = ler posicoes espicificas" << endl
-             << "[ 3 ] = alterar um registro" << endl
+             << "[ 3 ] = editar um registro" << endl
              << "[ 4 ] = trocar registros de posicao" << endl
              << "[ 5 ] = depurar arquivo binario completo" << endl
              << "[ 6 ] = sair" << endl
