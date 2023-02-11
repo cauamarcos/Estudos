@@ -1,3 +1,3 @@
-# resolucoes-IALG
+# resolucoes-UFLA
  
-Este repositório possui códigos com resoluções de questões propostas nas listas de Introdução aos Algoritmos da UFLA.
+Este repositório possui códigos com resoluções de questões propostas em matérias do curso de Ciências da Computação da Universidade Federal de Lavras.
