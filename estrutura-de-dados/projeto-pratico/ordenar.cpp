@@ -34,23 +34,30 @@ void inverterPosicoes (long long int pos1, long long int pos2) {
 }
 
 long long int particionar (fstream& arquivo, long long int menor, long long int maior) {
-    Registro pivot, registro;
+    // essa função irá dividir o arquivo
+    Registro pivot, aux;
     arquivo.seekg (maior * sizeof (Registro));
     arquivo.read ((char*) (&pivot), sizeof (Registro));
+    // leitura do último elemento do arquivo como pivot
     long long int i = menor - 1;
-    for (long long int j = menor; j <= maior; j++) {
+    for (long long int j = menor; j < maior; j++) {
         arquivo.seekg (j * sizeof (Registro));
-        arquivo.read ((char*)(&registro), sizeof (Registro));
-        if (string (registro.Area) < string (pivot.Area) or (string (registro.Area) == string (pivot.Area) and string (registro.geo_count) <= string (pivot.geo_count))) {
+        arquivo.read ((char*)(&aux), sizeof (Registro));
+        // leitura dos outros elementos do arquivo, um a cada looping
+        if (string (aux.Area) < string (pivot.Area) or (string (aux.Area) == string (pivot.Area) and string (aux.geo_count) <= string (pivot.geo_count))) {
+            // caso a comparação atenda aos critérios de ordenação, é feita a troca de posições
             i++;
             inverterPosicoes (i, j);
         }
     }
+    // por fim, trocamos as posições do pivô e do maior elemento
     inverterPosicoes (i + 1, maior);
     return i + 1;
 }
 
 void quicksort (fstream& arquivo, long long int menor, long long int maior) {
+    // a função recebe como parâmetros a função de manipulação do arquivo
+    // e as posições do primeiro e do último registros contidos nele
     if (menor < maior) {
         long long int pos = particionar (arquivo, menor, maior);
         quicksort (arquivo, menor, pos - 1);
@@ -60,14 +67,16 @@ void quicksort (fstream& arquivo, long long int menor, long long int maior) {
 
 int main () {
     fstream arquivo;
-    arquivo.open ("CSV.bin", ios::in | ios::out);
+    arquivo.open ("CSV.bin", ios::in | ios::out); // abertura do arquivo para leitura e escrita
     Registro registro;
     arquivo.seekg (0, arquivo.end);
+    // posicionamento da cabeça de leitura no final do arquivo
     long long int tam_bytes = arquivo.tellg ();
     long long int qtdCadastrados = tam_bytes / sizeof (Registro);
     arquivo.seekg (0, arquivo.beg);
-    quicksort (arquivo, 0, qtdCadastrados);
-    arquivo.close ();
+    // retorno da cabeça de leitura para o início do arquivo
+    quicksort (arquivo, 0, qtdCadastrados); // chamada do método de ordenação usado
+    arquivo.close (); // encerramento da função de manipulação do arquivo
     cout << "Arquivo ordenado com sucesso!" << endl;
     
     return 0;
