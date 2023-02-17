@@ -65,19 +65,111 @@ void quicksort (fstream& arquivo, long long int menor, long long int maior) {
     }
 }
 
-int main () {
-    fstream arquivo;
-    arquivo.open ("CSV.bin", ios::in | ios::out); // abertura do arquivo para leitura e escrita
+void depurarTodosRegistros () {
+    ifstream ler ("CSV.bin"); // abre o arquivo binario para leitura
+    ler.seekg (0, ler.end); // posiciona a cabeça de leitura no fim
+    long long int tam_bytes = ler.tellg (); // recebe o número de bytes do arquivo
+    long long int qntdCadastrados = (tam_bytes / sizeof (Registro)); 
+    // divide o tamanho do arquivo pelo tamanho da estrutura Registro para saber o número de registros no arquivo
+    ler.seekg (0, ler.beg); // retorna a cabeça de leitura para o início
+    if (ler) {
+        for (long long int j = 0; j < qntdCadastrados; j++) { // enquanto for possível ler, a variável "registro" recebe um registro lido do arquivo
+        Registro registro;
+        ler.read ((char*)(&registro), sizeof (Registro));
+        // a cada registro lido são depurados seus atributos
+        for (int i = 0; i < 5; i++)
+        cout << registro.anzsic06 [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.Area [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ano [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.geo_count [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ec_count [i];
+        cout << endl;
+        }
+    }
+    else {
+        ler.close (); // fechamento da função de leitura
+        }
+}
+
+void lerIntervalo () {
     Registro registro;
-    arquivo.seekg (0, arquivo.end);
-    // posicionamento da cabeça de leitura no final do arquivo
-    long long int tam_bytes = arquivo.tellg ();
-    long long int qtdCadastrados = tam_bytes / sizeof (Registro);
-    arquivo.seekg (0, arquivo.beg);
-    // retorno da cabeça de leitura para o início do arquivo
-    quicksort (arquivo, 0, qtdCadastrados); // chamada do método de ordenação usado
-    arquivo.close (); // encerramento da função de manipulação do arquivo
-    cout << "Arquivo ordenado com sucesso!" << endl;
-    
+    ifstream leitura ("CSV.bin"); // criação da função de leitura do arquivo binário
+    long long int linhaInicio, linhaFim;
+    // entrada do intervalo de linhas que serão depuradas
+    cout << "Digite a posicao da linha de inicio da leitura: ";
+    cin >> linhaInicio;
+    cout << "Digite a posicao da linha de termino da leitura: ";
+    cin >> linhaFim;
+    cout << endl;
+    // posicionamento da cabeça de leitura na posição inicial
+    leitura.seekg ((linhaInicio) * sizeof (Registro));
+    for (int j = linhaInicio; j <= linhaFim; j++) {
+    // a cada repetição é lido e depurado um registro
+    leitura.read ((char*)(&registro), sizeof (Registro));
+    for (int i = 0; i < 5; i++)
+        cout <<  registro.anzsic06 [i];
+    cout << ",";
+    for (int i = 0; i < 7; i++)
+        cout << registro.Area [i];
+    cout << ",";
+    for (int i = 0; i < 7; i++)
+        cout << registro.ano [i];
+    cout << ",";
+    for (int i = 0; i < 7; i++)
+        cout << registro.geo_count [i];
+    cout << ",";
+    for (int i = 0; i < 7; i++)
+        cout << registro.ec_count [i];
+    cout << endl;
+    }
+    leitura.close (); // fechamento da função
+}
+
+
+
+int main () {
+    int comando = 0;
+    while (comando != 4){
+    cout << "Selecione uma opcao" << endl
+            << "[ 1 ] = depurar arquivo binario completo" << endl
+            << "[ 2 ] = ler posicoes especificas" << endl
+            << "[ 3 ] = ordenar arquivo binario" << endl
+            << "[ 4 ] = sair" << endl
+            << "Sua escolha: ";
+    cin >> comando;
+    cout << endl;
+    if (comando == 1)
+        depurarTodosRegistros ();
+    else if (comando == 2)
+        lerIntervalo ();
+    else if (comando == 3) {
+        fstream arquivo;
+        arquivo.open ("CSV.bin", ios::in | ios::out); // abertura do arquivo para leitura e escrita
+        Registro registro;
+        arquivo.seekg (0, arquivo.end);
+        // posicionamento da cabeça de leitura no final do arquivo
+        long long int tam_bytes = arquivo.tellg ();
+        long long int qtdCadastrados = tam_bytes / sizeof (Registro);
+        arquivo.seekg (0, arquivo.beg);
+        // retorno da cabeça de leitura para o início do arquivo
+        quicksort (arquivo, 0, qtdCadastrados); // chamada do método de ordenação usado
+        arquivo.close (); // encerramento da função de manipulação do arquivo
+        cout << "Arquivo ordenado com sucesso!" << endl;
+    }
+    else if (comando == 4)
+        cout << "Encerrando sistema...";
+    else
+        cout << "ERRO! Comando invalido" << endl;
+    cout << endl; 
+    }
+
     return 0;
 }
