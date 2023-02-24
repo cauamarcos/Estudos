@@ -1,5 +1,14 @@
+/*Trabalho pratico parte 2 - ordenacao externa
+  Grupo:Lucas de Castro Nizio
+        Luiz Victor Soriano
+        Caua Marcos de Oliveira 
+  SUbistituimos a variavel qtdCadastrados por um valor fixo de 300000 na chamada da funcao quicksort
+  devido a demora no processo de ordenacao, sendo feita a verificacao chamando a funcao de ler posicoes especificas
+  da linha 0 ate a linha 300000.*/
+
 #include <fstream>
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 struct Registro { // registro com os campos a serem lidos da base de dados
@@ -37,17 +46,29 @@ long long int particionar (fstream& arquivo, long long int menor, long long int 
     // essa função irá dividir o arquivo
     Registro pivot, aux;
     arquivo.seekg (maior * sizeof (Registro));
-    arquivo.read ((char*) (&pivot), sizeof (Registro));
+    arquivo.read ((char*)(&pivot), sizeof (Registro));
     // leitura do último elemento do arquivo como pivot
     long long int i = menor - 1;
     for (long long int j = menor; j < maior; j++) {
         arquivo.seekg (j * sizeof (Registro));
         arquivo.read ((char*)(&aux), sizeof (Registro));
         // leitura dos outros elementos do arquivo, um a cada looping
-        if (string (aux.Area) < string (pivot.Area) or (string (aux.Area) == string (pivot.Area) and string (aux.geo_count) <= string (pivot.geo_count))) {
+        if (string (aux.Area) < string (pivot.Area)){
+            // caso a comparação atenda aos critérios de ordenação, é feita a troca de posições
+            i++;
+            inverterPosicoes (i,j);
+        }
+        else if (string (aux.Area) == string (pivot.Area)) {
+            //comparracao caso as areas sejam iguais
+            string s = string (aux.geo_count);
+            string s1 = string (pivot.geo_count);
+            int n = stoi (s); // conversao de string para inteiro para a realizacao da comparacao
+            int n1 = stoi (s1);
+            if (n < n1){
             // caso a comparação atenda aos critérios de ordenação, é feita a troca de posições
             i++;
             inverterPosicoes (i, j);
+            }
         }
     }
     // por fim, trocamos as posições do pivô e do maior elemento
@@ -96,7 +117,7 @@ void depurarTodosRegistros () {
     }
     else {
         ler.close (); // fechamento da função de leitura
-        }
+    }
 }
 
 void lerIntervalo () {
@@ -112,63 +133,61 @@ void lerIntervalo () {
     // posicionamento da cabeça de leitura na posição inicial
     leitura.seekg ((linhaInicio) * sizeof (Registro));
     for (int j = linhaInicio; j <= linhaFim; j++) {
-    // a cada repetição é lido e depurado um registro
-    leitura.read ((char*)(&registro), sizeof (Registro));
-    for (int i = 0; i < 5; i++)
-        cout <<  registro.anzsic06 [i];
-    cout << ",";
-    for (int i = 0; i < 7; i++)
-        cout << registro.Area [i];
-    cout << ",";
-    for (int i = 0; i < 7; i++)
-        cout << registro.ano [i];
-    cout << ",";
-    for (int i = 0; i < 7; i++)
-        cout << registro.geo_count [i];
-    cout << ",";
-    for (int i = 0; i < 7; i++)
-        cout << registro.ec_count [i];
-    cout << endl;
+        // a cada repetição é lido e depurado um registro
+        leitura.read ((char*)(&registro), sizeof (Registro));
+        for (int i = 0; i < 5; i++)
+            cout <<  registro.anzsic06 [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.Area [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ano [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.geo_count [i];
+        cout << ",";
+        for (int i = 0; i < 7; i++)
+            cout << registro.ec_count [i];
+        cout << endl;
     }
     leitura.close (); // fechamento da função
 }
 
-
-
 int main () {
     int comando = 0;
-    while (comando != 4){
-    cout << "Selecione uma opcao" << endl
+    while (comando != 4) {
+        cout << "Selecione uma opcao" << endl
             << "[ 1 ] = depurar arquivo binario completo" << endl
             << "[ 2 ] = ler posicoes especificas" << endl
             << "[ 3 ] = ordenar arquivo binario" << endl
             << "[ 4 ] = sair" << endl
             << "Sua escolha: ";
-    cin >> comando;
-    cout << endl;
-    if (comando == 1)
-        depurarTodosRegistros ();
-    else if (comando == 2)
-        lerIntervalo ();
-    else if (comando == 3) {
-        fstream arquivo;
-        arquivo.open ("CSV.bin", ios::in | ios::out); // abertura do arquivo para leitura e escrita
-        Registro registro;
-        arquivo.seekg (0, arquivo.end);
-        // posicionamento da cabeça de leitura no final do arquivo
-        long long int tam_bytes = arquivo.tellg ();
-        long long int qtdCadastrados = tam_bytes / sizeof (Registro);
-        arquivo.seekg (0, arquivo.beg);
-        // retorno da cabeça de leitura para o início do arquivo
-        quicksort (arquivo, 0, qtdCadastrados); // chamada do método de ordenação usado
-        arquivo.close (); // encerramento da função de manipulação do arquivo
-        cout << "Arquivo ordenado com sucesso!" << endl;
-    }
-    else if (comando == 4)
-        cout << "Encerrando sistema...";
-    else
-        cout << "ERRO! Comando invalido" << endl;
-    cout << endl; 
+        cin >> comando;
+        cout << endl;
+        if (comando == 1)
+            depurarTodosRegistros ();
+        else if (comando == 2)
+            lerIntervalo ();
+        else if (comando == 3) {
+            fstream arquivo;
+            arquivo.open ("CSV.bin", ios::in | ios::out); // abertura do arquivo para leitura e escrita
+            Registro registro;
+            arquivo.seekg (0, arquivo.end);
+            // posicionamento da cabeça de leitura no final do arquivo
+            long long int tam_bytes = arquivo.tellg ();
+            long long int qtdCadastrados = tam_bytes / sizeof (Registro);
+            arquivo.seekg (0, arquivo.beg);
+            // retorno da cabeça de leitura para o início do arquivo
+            quicksort (arquivo, 0, 300000); // chamada do método de ordenação usado
+            arquivo.close (); // encerramento da função de manipulação do arquivo
+            cout << "Arquivo ordenado com sucesso!" << endl;
+        }
+        else if (comando == 4)
+            cout << "Encerrando sistema...";
+        else
+            cout << "ERRO! Comando invalido" << endl;
+        cout << endl; 
     }
 
     return 0;
